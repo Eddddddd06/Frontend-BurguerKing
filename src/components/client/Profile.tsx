@@ -39,7 +39,6 @@ export function Profile() {
   const [menuItems, setMenuItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [error, setError] = useState("");
   const { isAuthenticated, logout } = useAuth();
   const { addItem } = useCart();
   const navigate = useNavigate();
