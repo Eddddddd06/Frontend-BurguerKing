@@ -113,7 +113,7 @@ export function AdminDashboard() {
       {/* Sidebar */}
       <aside className="w-64 bg-card border-r border-border flex flex-col hidden md:flex">
         <div className="h-16 flex items-center px-6 border-b border-border gap-2">
-          <img src="/assets/logo.png" alt="Burger King Logo" className="h-8 w-auto object-contain" />
+          <img src="/Logo/Logo_Burguer.png" alt="Burger King Logo" className="h-8 w-auto object-contain" />
           <span className="font-display text-xl font-bold text-primary tracking-tighter">
             ADMIN
           </span>

@@ -66,7 +66,7 @@ export function ClientLayout() {
         <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-4 flex-1">
             <Link to="/client" className="flex items-center gap-2">
-              <img src="/assets/logo.png" alt="Burger King Logo" className="h-10 w-auto object-contain" />
+              <img src="/Logo/Logo_Burguer.png" alt="Burger King Logo" className="h-10 w-auto object-contain" />
               <span className="hidden sm:inline font-display text-2xl font-bold tracking-tighter whitespace-nowrap">
                 BURGER KING
               </span>
@@ -120,11 +120,6 @@ export function ClientLayout() {
           <Link to="/client" className="font-display font-bold text-foreground text-sm hover:text-primary transition-colors whitespace-nowrap">
             PROMOCIONES
           </Link>
-          {!isGuest && isAuthenticated && (
-            <Link to="/client/profile" className="font-display font-bold text-foreground text-sm hover:text-primary transition-colors whitespace-nowrap">
-              MI PERFIL
-            </Link>
-          )}
         </div>
       </div>
 

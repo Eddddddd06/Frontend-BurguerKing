@@ -151,7 +151,10 @@ export function Profile() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
-      <h1 className="font-display text-3xl font-bold mb-8">Mi Perfil</h1>
+      <div className="mb-8 border-b border-border pb-4">
+        <h1 className="font-display text-3xl font-bold">Hola, {profileData.nombre} 👋</h1>
+        <p className="text-foreground/60 mt-2 font-medium">Revisa tus pedidos, seguimiento y productos favoritos.</p>
+      </div>
 
       <div className="flex flex-col gap-10">
         
