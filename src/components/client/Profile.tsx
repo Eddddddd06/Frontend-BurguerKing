@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CheckCircle2, Clock, ChefHat, Package, Bike, Plus } from "lucide-react";
+import { CheckCircle2, Clock, ChefHat, Package, Bike, Plus, LogOut } from "lucide-react";
 import { useNavigate } from "react-router";
 import { getProfile, getMenu } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
@@ -39,9 +39,15 @@ export function Profile() {
   const [menuItems, setMenuItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const { isAuthenticated } = useAuth();
+  const [error, setError] = useState("");
+  const { isAuthenticated, logout } = useAuth();
   const { addItem } = useCart();
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -151,9 +157,18 @@ export function Profile() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
-      <div className="mb-8 border-b border-border pb-4">
-        <h1 className="font-display text-3xl font-bold">Hola, {profileData.nombre} 👋</h1>
-        <p className="text-foreground/60 mt-2 font-medium">Revisa tus pedidos, seguimiento y productos favoritos.</p>
+      <div className="mb-8 border-b border-border pb-4 flex justify-between items-start">
+        <div>
+          <h1 className="font-display text-3xl font-bold">Hola, {profileData.nombre} 👋</h1>
+          <p className="text-foreground/60 mt-2 font-medium">Revisa tus pedidos, seguimiento y productos favoritos.</p>
+        </div>
+        <button 
+          onClick={handleLogout}
+          className="flex items-center gap-2 px-4 py-2 bg-destructive/10 text-destructive font-bold rounded-lg hover:bg-destructive hover:text-white transition-colors"
+        >
+          <LogOut size={18} />
+          Cerrar Sesión
+        </button>
       </div>
 
       <div className="flex flex-col gap-10">

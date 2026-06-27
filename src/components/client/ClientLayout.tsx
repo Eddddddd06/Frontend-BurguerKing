@@ -82,11 +82,6 @@ export function ClientLayout() {
             </div>
           </div>
 
-          <div className="hidden lg:flex items-center gap-2 text-sm font-medium hover:bg-white/10 px-3 py-2 rounded-full cursor-pointer transition-colors">
-            <MapPin size={18} />
-            <span>Ingresa tu ubicación</span>
-          </div>
-
           <div className="flex items-center gap-2 md:gap-4">
             <Link
               to={isGuest ? "/" : "/client/profile"}
