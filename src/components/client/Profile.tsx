@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { CheckCircle2, Clock, ChefHat, Package, Bike, Plus } from "lucide-react";
 import { useNavigate } from "react-router";
-import { getProfile } from "../../services/api";
+import { getProfile, getMenu } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../context/CartContext";
 import { ImageWithFallback } from "../ImageWithFallback";
@@ -36,6 +36,7 @@ interface ProfileData {
 
 export function Profile() {
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
+  const [menuItems, setMenuItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const { isAuthenticated } = useAuth();
@@ -47,19 +48,32 @@ export function Profile() {
       navigate('/');
       return;
     }
-    const fetchProfile = async () => {
+    const fetchInitialData = async () => {
       try {
-        const data = await getProfile();
-        setProfileData(data);
+        const [profData, menuData] = await Promise.all([
+          getProfile(),
+          getMenu()
+        ]);
+        setProfileData(profData);
+        setMenuItems(menuData.menu || []);
       } catch (err: any) {
         setError(err.message || 'Error cargando perfil');
       } finally {
         setLoading(false);
       }
     };
-    fetchProfile();
-    // Poll every 10s for order status updates
-    const interval = setInterval(fetchProfile, 10000);
+    fetchInitialData();
+    
+    // Solo hacemos poll de getProfile para actualizaciones de estado, getMenu no necesita polling
+    const pollProfile = async () => {
+      try {
+        const data = await getProfile();
+        setProfileData(data);
+      } catch (err) {
+        // Silently fail polling errors
+      }
+    };
+    const interval = setInterval(pollProfile, 10000);
     return () => clearInterval(interval);
   }, [isAuthenticated, navigate]);
 
@@ -224,9 +238,23 @@ export function Profile() {
               {profileData.favoritos.map((product) => (
                 <div key={product.producto_id} className="bg-card rounded-[12px] shadow-sm border border-border overflow-hidden hover:shadow-md transition-shadow group flex flex-col">
                   <div className="relative aspect-square overflow-hidden bg-white flex items-center justify-center p-4">
-                    <div className="w-full h-full flex items-center justify-center text-foreground/20">
-                      <span className="text-4xl">🍔</span>
-                    </div>
+                    {(() => {
+                      const foundMenu = menuItems.find(m => m.producto_id === product.producto_id);
+                      if (foundMenu && foundMenu.imagen_url) {
+                        return (
+                          <ImageWithFallback 
+                            src={foundMenu.imagen_url} 
+                            alt={product.nombre}
+                            className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                          />
+                        );
+                      }
+                      return (
+                        <div className="w-full h-full flex items-center justify-center text-foreground/20">
+                          <span className="text-4xl">🍔</span>
+                        </div>
+                      );
+                    })()}
                   </div>
                   <div className="p-4 flex flex-col flex-1">
                     <h3 className="font-bold text-lg mb-1 line-clamp-2">{product.nombre}</h3>
