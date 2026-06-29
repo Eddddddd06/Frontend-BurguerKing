@@ -112,9 +112,9 @@ export function Home() {
           </h2>
           
           {promos.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               {promos.map((product) => (
-                <div key={product.producto_id} className="bg-card rounded-[12px] shadow-sm border border-border overflow-hidden hover:shadow-md transition-shadow group flex flex-col">
+                <div key={product.producto_id} className="flex-none w-[280px] sm:w-[320px] snap-center bg-card rounded-[12px] shadow-sm border border-border overflow-hidden hover:shadow-md transition-shadow group flex flex-col">
                   <div className="relative aspect-square overflow-hidden bg-white flex items-center justify-center p-4">
                     {product.es_favorito && (
                       <span className="absolute top-3 left-3 bg-success text-white text-[10px] font-bold px-2 py-1 rounded uppercase z-10">
@@ -156,9 +156,9 @@ export function Home() {
           <h2 className="font-display text-2xl mb-6">Nuestra Carta</h2>
           
           {carta.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               {carta.map((product) => (
-                <div key={product.producto_id} className="bg-card rounded-[12px] shadow-sm border border-border overflow-hidden hover:shadow-md transition-shadow group flex flex-col">
+                <div key={product.producto_id} className="flex-none w-[280px] sm:w-[320px] snap-center bg-card rounded-[12px] shadow-sm border border-border overflow-hidden hover:shadow-md transition-shadow group flex flex-col">
                   <div className="relative aspect-square overflow-hidden bg-white flex items-center justify-center p-4">
                     {product.es_favorito && (
                       <span className="absolute top-3 left-3 bg-success text-white text-[10px] font-bold px-2 py-1 rounded uppercase z-10">

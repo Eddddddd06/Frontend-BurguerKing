@@ -1,11 +1,13 @@
 import { Outlet, Link, useNavigate, useLocation } from "react-router";
-import { Search, MapPin, User, ShoppingCart, X, ChevronRight, Trash2 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Search, MapPin, User, ShoppingCart, X, ChevronRight, Trash2, ChevronDown } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../context/CartContext";
 
 export function ClientLayout() {
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isSedeOpen, setIsSedeOpen] = useState(false);
+  const sedeRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
   const { isGuest, isAuthenticated, sede, updateSede } = useAuth();
@@ -17,6 +19,17 @@ export function ClientLayout() {
       fetchCart();
     }
   }, [isAuthenticated, fetchCart]);
+
+  // Handle outside click for Sede dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (sedeRef.current && !sedeRef.current.contains(event.target as Node)) {
+        setIsSedeOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Redirect guests away from protected routes
   useEffect(() => {
@@ -64,7 +77,7 @@ export function ClientLayout() {
       {/* Header/NavBar */}
       <header className="bg-primary text-primary-foreground sticky top-0 z-40 shadow-sm">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4 flex-1">
+            <div className="flex items-center gap-4 flex-1">
             <Link to="/client" className="flex items-center gap-2">
               <img src="/Logo/LogoLetrasblancas.png" alt="Burger King Logo" className="h-10 w-auto object-contain" />
               <span className="hidden sm:inline font-display text-2xl font-bold tracking-tighter whitespace-nowrap">
@@ -72,26 +85,35 @@ export function ClientLayout() {
               </span>
             </Link>
 
-            <div className="hidden md:flex items-center bg-white/10 rounded-full px-3 py-1.5 w-full max-w-sm border border-white/20 focus-within:bg-white focus-within:text-foreground transition-colors">
-              <Search size={18} className="text-current opacity-70" />
-              <input
-                type="text"
-                placeholder="Buscar en el menú..."
-                className="bg-transparent border-none outline-none px-2 w-full text-sm placeholder:text-current placeholder:opacity-60"
-              />
-            </div>
+            <div className="flex-1" /> {/* Spacer */}
             
-            <div className="flex items-center gap-2 bg-white/10 rounded-full px-3 py-1.5 border border-white/20">
-              <MapPin size={16} className="text-white" />
-              <select 
-                value={sede} 
-                onChange={(e) => updateSede(e.target.value)}
-                className="bg-transparent border-none outline-none text-white cursor-pointer text-sm font-bold appearance-none"
+            {/* Custom Sede Dropdown */}
+            <div className="relative" ref={sedeRef}>
+              <button 
+                onClick={() => setIsSedeOpen(!isSedeOpen)}
+                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 rounded-full px-4 py-2 border border-white/20 transition-colors cursor-pointer text-white text-sm font-bold"
               >
-                <option value="barranco" className="text-black">Barranco</option>
-                <option value="miraflores" className="text-black">Miraflores</option>
-                <option value="san_isidro" className="text-black">San Isidro</option>
-              </select>
+                <MapPin size={16} className="text-white" />
+                <span className="capitalize">{sede.replace('_', ' ')}</span>
+                <ChevronDown size={16} className={`transition-transform ${isSedeOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {isSedeOpen && (
+                <div className="absolute top-full right-0 mt-2 w-48 bg-card rounded-[12px] shadow-2xl overflow-hidden z-50 border border-border">
+                  {['barranco', 'miraflores', 'san_isidro'].map((option) => (
+                    <button
+                      key={option}
+                      onClick={() => {
+                        updateSede(option);
+                        setIsSedeOpen(false);
+                      }}
+                      className={`w-full text-left px-4 py-3 text-sm font-bold transition-colors hover:bg-black/5 ${sede === option ? 'bg-primary/10 text-primary' : 'text-foreground'}`}
+                    >
+                      {option.charAt(0).toUpperCase() + option.slice(1).replace('_', ' ')}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
@@ -121,12 +143,12 @@ export function ClientLayout() {
 
       {/* SubMenu */}
       <div className="bg-[#EBE0D6] border-b border-border/50">
-        <div className="container mx-auto px-4 h-12 flex items-center gap-6 overflow-x-auto">
-          <Link to="/client" className="font-display font-bold text-foreground text-sm hover:text-primary transition-colors whitespace-nowrap">
-            CARTA
-          </Link>
-          <Link to="/client" className="font-display font-bold text-foreground text-sm hover:text-primary transition-colors whitespace-nowrap">
-            PROMOCIONES
+        <div className="container mx-auto px-4 h-14 flex items-center justify-center overflow-x-auto">
+          <Link 
+            to="/client" 
+            className="font-display font-bold bg-primary text-white px-6 py-2 rounded-full text-sm hover:bg-primary/90 transition-all shadow-md flex items-center gap-2 whitespace-nowrap"
+          >
+            🍔 MENÚ PRINCIPAL
           </Link>
         </div>
       </div>
