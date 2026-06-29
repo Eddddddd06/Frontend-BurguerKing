@@ -39,7 +39,7 @@ export function Profile() {
   const [menuItems, setMenuItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, sede } = useAuth();
   const { addItem } = useCart();
   const navigate = useNavigate();
 
@@ -57,7 +57,7 @@ export function Profile() {
       try {
         const [profData, menuData] = await Promise.all([
           getProfile(),
-          getMenu()
+          getMenu(sede)
         ]);
         setProfileData(profData);
         setMenuItems(menuData.menu || []);
