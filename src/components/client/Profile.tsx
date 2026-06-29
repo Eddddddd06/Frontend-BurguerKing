@@ -44,7 +44,10 @@ export function Profile() {
   const { addItem } = useCart();
   const navigate = useNavigate();
   const [cancelledOrder, setCancelledOrder] = useState<{pedido_id: string; notificacion: string} | null>(null);
-  const [dismissedCancellations, setDismissedCancellations] = useState<Set<string>>(new Set());
+  const [dismissedCancellations, setDismissedCancellations] = useState<Set<string>>(() => {
+    const saved = localStorage.getItem('dismissedCancellations');
+    return saved ? new Set(JSON.parse(saved)) : new Set();
+  });
 
   const handleLogout = () => {
     logout();
@@ -102,7 +105,9 @@ export function Profile() {
 
   const dismissCancellation = () => {
     if (cancelledOrder) {
-      setDismissedCancellations(prev => new Set(prev).add(cancelledOrder.pedido_id));
+      const newSet = new Set(dismissedCancellations).add(cancelledOrder.pedido_id);
+      setDismissedCancellations(newSet);
+      localStorage.setItem('dismissedCancellations', JSON.stringify(Array.from(newSet)));
       setCancelledOrder(null);
     }
   };
@@ -168,7 +173,7 @@ export function Profile() {
 
   // Completed orders for history
   const pastOrders = profileData.historial_pedidos.filter(
-    o => o.estado === 'ENTREGADO'
+    o => o.estado === 'ENTREGADO' || o.estado === 'CANCELADO'
   );
 
   // Get EN_REPARTO message
@@ -263,14 +268,7 @@ export function Profile() {
           </section>
         )}
 
-        {/* No active order message */}
-        {!activeOrder && (
-          <section>
-            <div className="bg-card rounded-[12px] border border-border p-6 text-center">
-              <p className="text-foreground/60">No tienes pedidos activos en este momento.</p>
-            </div>
-          </section>
-        )}
+        {/* Active tracking was here, empty state removed completely */}
 
         {/* Favoritos */}
         <section>
@@ -333,6 +331,7 @@ export function Profile() {
                     <tr className="bg-black/5 text-sm uppercase tracking-wider text-foreground/60 border-b border-border">
                       <th className="p-4 font-bold">Nº Pedido</th>
                       <th className="p-4 font-bold">Productos</th>
+                      <th className="p-4 font-bold">Estado</th>
                       <th className="p-4 font-bold text-right">Total</th>
                     </tr>
                   </thead>
@@ -342,6 +341,13 @@ export function Profile() {
                         <td className="p-4 font-mono font-bold text-sm">{order.pedido_id.substring(0, 8).toUpperCase()}</td>
                         <td className="p-4 text-sm text-foreground/80 max-w-xs truncate">
                           {order.items.map(i => `${i.cantidad}x ${i.nombre}`).join(', ')}
+                        </td>
+                        <td className="p-4">
+                          {order.estado === 'CANCELADO' ? (
+                            <span className="text-xs bg-destructive/10 text-destructive px-2 py-1 rounded-md font-bold uppercase">Cancelado</span>
+                          ) : (
+                            <span className="text-xs bg-success/10 text-success px-2 py-1 rounded-md font-bold uppercase">Entregado</span>
+                          )}
                         </td>
                         <td className="p-4 font-bold text-right text-primary">S/ {order.total.toFixed(2)}</td>
                       </tr>
