@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CheckCircle2, Clock, ChefHat, Package, Bike, Plus, LogOut } from "lucide-react";
+import { CheckCircle2, Clock, ChefHat, Package, Bike, Plus, LogOut, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router";
 import { getProfile, getMenu } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
@@ -19,6 +19,7 @@ interface ProfileData {
     origen: string;
     direccion_entrega: string;
     departamento_entrega: string;
+    notificacion?: string;
     items: Array<{
       producto_id: string;
       nombre: string;
@@ -42,6 +43,8 @@ export function Profile() {
   const { isAuthenticated, logout, sede } = useAuth();
   const { addItem } = useCart();
   const navigate = useNavigate();
+  const [cancelledOrder, setCancelledOrder] = useState<{pedido_id: string; notificacion: string} | null>(null);
+  const [dismissedCancellations, setDismissedCancellations] = useState<Set<string>>(new Set());
 
   const handleLogout = () => {
     logout();
@@ -81,6 +84,28 @@ export function Profile() {
     const interval = setInterval(pollProfile, 10000);
     return () => clearInterval(interval);
   }, [isAuthenticated, navigate]);
+
+  // Detect cancelled orders and show popup
+  useEffect(() => {
+    if (profileData) {
+      const cancelled = profileData.historial_pedidos.find(
+        o => o.estado === 'CANCELADO' && !dismissedCancellations.has(o.pedido_id)
+      );
+      if (cancelled) {
+        setCancelledOrder({
+          pedido_id: cancelled.pedido_id,
+          notificacion: cancelled.notificacion || 'Hubo un problema, su pedido ha sido cancelado y se efectuará el reembolso correspondiente.',
+        });
+      }
+    }
+  }, [profileData, dismissedCancellations]);
+
+  const dismissCancellation = () => {
+    if (cancelledOrder) {
+      setDismissedCancellations(prev => new Set(prev).add(cancelledOrder.pedido_id));
+      setCancelledOrder(null);
+    }
+  };
 
   const states = [
     { id: "PENDIENTE_PAGO", label: "Pendiente", icon: Clock },
@@ -333,6 +358,34 @@ export function Profile() {
         </section>
 
       </div>
+
+      {/* Cancellation Popup Modal — same style as Checkout payment modal */}
+      {cancelledOrder && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-card w-full max-w-md rounded-[12px] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="bg-destructive p-6 text-white text-center">
+              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <AlertTriangle size={32} className="text-white" />
+              </div>
+              <h2 className="font-display text-2xl font-bold">Pedido Cancelado</h2>
+              <p className="text-white/80 text-sm mt-1">Pedido #{cancelledOrder.pedido_id.substring(0, 8).toUpperCase()}</p>
+            </div>
+            
+            <div className="p-6 sm:p-8 space-y-6 text-center">
+              <p className="text-foreground/80 font-medium">
+                {cancelledOrder.notificacion}
+              </p>
+
+              <button 
+                onClick={dismissCancellation}
+                className="w-full bg-destructive hover:bg-destructive/90 text-white font-display font-bold py-4 rounded-[12px] shadow-lg shadow-destructive/20 transition-all text-lg hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Entendido
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

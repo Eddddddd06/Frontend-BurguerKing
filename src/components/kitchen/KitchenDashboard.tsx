@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Check, LayoutGrid, List } from "lucide-react";
+import { Check, LayoutGrid, List, X } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../../context/AuthContext";
 import { getWorkQueue, completeStep } from "../../services/api";
@@ -59,15 +59,19 @@ export function KitchenDashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  const advanceStatus = async (pedido_id: string) => {
+  const advanceStatus = async (pedido_id: string, accion: 'completar' | 'cancelar' = 'completar') => {
     setCompleting(pedido_id);
     try {
-      const result = await completeStep(pedido_id);
-      alert(`✅ ${result.mensaje}`);
+      const result = await completeStep(pedido_id, accion);
+      if (accion === 'cancelar') {
+        alert(`❌ Pedido cancelado correctamente.`);
+      } else {
+        alert(`✅ ${result.mensaje}`);
+      }
       // Refresh queue after completing step
       await fetchQueue();
     } catch (err: any) {
-      alert(err.message || 'Error al completar paso');
+      alert(err.message || 'Error al procesar paso');
     } finally {
       setCompleting(null);
     }
@@ -163,13 +167,22 @@ export function KitchenDashboard() {
                 </ul>
               </div>
 
-              <div className="p-4 bg-black/20 mt-auto">
+              <div className="p-4 bg-black/20 mt-auto flex gap-2">
                 <button 
-                  onClick={() => advanceStatus(order.pedido_id)}
+                  onClick={() => advanceStatus(order.pedido_id, 'completar')}
                   disabled={completing === order.pedido_id}
-                  className="w-full bg-[#008537] hover:bg-[#008537]/80 text-white font-display font-bold py-4 rounded-xl shadow-lg shadow-[#008537]/20 transition-all flex items-center justify-center gap-2 text-lg uppercase tracking-wider disabled:opacity-50"
+                  className="flex-1 bg-[#008537] hover:bg-[#008537]/80 text-white font-display font-bold py-3 rounded-xl shadow-lg shadow-[#008537]/20 transition-all flex items-center justify-center gap-2 text-sm uppercase tracking-wider disabled:opacity-50"
+                  title="Completar Paso"
                 >
-                  <Check size={24} /> {completing === order.pedido_id ? 'Completando...' : 'Completar Paso'}
+                  <Check size={20} /> COMPLETAR
+                </button>
+                <button 
+                  onClick={() => advanceStatus(order.pedido_id, 'cancelar')}
+                  disabled={completing === order.pedido_id}
+                  className="bg-destructive hover:bg-destructive/80 text-white font-display font-bold px-4 py-3 rounded-xl shadow-lg shadow-destructive/20 transition-all flex items-center justify-center gap-2 text-sm uppercase tracking-wider disabled:opacity-50"
+                  title="Cancelar Pedido"
+                >
+                  <X size={20} />
                 </button>
               </div>
             </div>

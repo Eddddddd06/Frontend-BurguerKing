@@ -19,10 +19,13 @@ export function AdminDashboard() {
   const [menuLoading, setMenuLoading] = useState(false);
 
   // Personnel form state
-  const [personalEmail, setPersonalEmail] = useState("");
+  const [personalUsername, setPersonalUsername] = useState("");
   const [personalPassword, setPersonalPassword] = useState("");
   const personalRol = "empleado" as const;
   const [personalLoading, setPersonalLoading] = useState(false);
+
+  // Extract admin's sede
+  const adminSede = email ? email.split('@')[0].split('.').slice(1).join('.') : 'barranco';
 
   // Check role
   if (role !== 'admin') {
@@ -81,20 +84,23 @@ export function AdminDashboard() {
   };
 
   const handlePersonalSubmit = async () => {
-    if (!personalEmail.trim() || !personalPassword.trim()) {
-      alert("Completa email y contraseña.");
+    if (!personalUsername.trim() || !personalPassword.trim()) {
+      alert("Completa el nombre de usuario y contraseña.");
       return;
     }
+
+    const generatedEmail = `${personalUsername.toLowerCase()}.${adminSede}@burgerking.com`;
 
     setPersonalLoading(true);
     try {
       const result = await seedUser({
-        email: personalEmail,
+        email: generatedEmail,
         password: personalPassword,
-        rol: personalRol
+        rol: personalRol,
+        sede: adminSede
       });
-      alert(`¡Usuario ${personalRol} creado exitosamente! ${result.mensaje}`);
-      setPersonalEmail("");
+      alert(`¡Usuario ${personalRol} creado exitosamente! ${result.mensaje}\nEmail: ${generatedEmail}`);
+      setPersonalUsername("");
       setPersonalPassword("");
     } catch (err: any) {
       alert(err.message || "Error al crear usuario");
@@ -261,16 +267,22 @@ export function AdminDashboard() {
                 
                 <form className="p-6 sm:p-8 space-y-6" onSubmit={(e) => { e.preventDefault(); handlePersonalSubmit(); }}>
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-foreground/80">Correo Electrónico</label>
-                    <input 
-                      type="email" 
-                      name="email"
-                      value={personalEmail}
-                      onChange={(e) => setPersonalEmail(e.target.value)}
-                      placeholder="empleado@burgerking.com"
-                      required
-                      className="w-full px-4 py-3 rounded-xl border border-border bg-input-background focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-                    />
+                    <label className="text-sm font-bold text-foreground/80">Nombre de Usuario (sin @)</label>
+                    <div className="flex items-center gap-2">
+                      <input 
+                        type="text" 
+                        name="username"
+                        value={personalUsername}
+                        onChange={(e) => setPersonalUsername(e.target.value)}
+                        placeholder="ejemplo.juan"
+                        required
+                        className="flex-1 px-4 py-3 rounded-xl border border-border bg-input-background focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                      />
+                      <span className="text-sm text-foreground/60 font-medium whitespace-nowrap bg-black/5 px-3 py-3 rounded-xl border border-border">
+                        .{adminSede}@burgerking.com
+                      </span>
+                    </div>
+                    <p className="text-xs text-foreground/50">La sede se asigna automáticamente al correo.</p>
                   </div>
 
                   <div className="space-y-2">

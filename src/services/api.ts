@@ -50,6 +50,7 @@ export async function seedUser(data: {
   email: string;
   password: string;
   rol: 'admin' | 'empleado';
+  sede: string;
 }): Promise<{ mensaje: string; usuario_id: string }> {
   const res = await fetch(`${API_BASE}/admin/seed-usuarios`, {
     method: 'POST',
@@ -214,14 +215,14 @@ export async function getWorkQueue(): Promise<{
   return handleResponse(res);
 }
 
-export async function completeStep(pedido_id: string): Promise<{
+export async function completeStep(pedido_id: string, accion: 'completar' | 'cancelar' = 'completar'): Promise<{
   mensaje: string;
   siguiente_paso: string;
 }> {
   const res = await fetch(`${API_BASE}/empleados/completar-paso`, {
     method: 'POST',
     headers: authHeaders(),
-    body: JSON.stringify({ pedido_id }),
+    body: JSON.stringify({ pedido_id, accion }),
   });
   return handleResponse(res);
 }
