@@ -1,4 +1,4 @@
-const API_BASE = 'https://ewavegx0bb.execute-api.us-east-1.amazonaws.com/dev';
+const API_BASE = 'https://lmhhjsjxlc.execute-api.us-east-1.amazonaws.com/dev';
 
 function getToken(): string | null {
   return localStorage.getItem('token');
@@ -60,7 +60,7 @@ export async function seedUser(data: {
 }
 
 // ============ MENU ============
-export async function getMenu(): Promise<{ menu: Array<{
+export async function getMenu(sede: string): Promise<{ menu: Array<{
   producto_id: string;
   tipo: string;
   nombre: string;
@@ -68,7 +68,7 @@ export async function getMenu(): Promise<{ menu: Array<{
   imagen_url: string;
   es_favorito: boolean;
 }> }> {
-  const res = await fetch(`${API_BASE}/menu`, {
+  const res = await fetch(`${API_BASE}/menu?sede=${sede}`, {
     method: 'GET',
     headers: authHeaders(),
   });
@@ -125,7 +125,7 @@ export async function getProfile(): Promise<{
 }
 
 // ============ CART ============
-export async function getCart(): Promise<{
+export async function getCart(sede: string): Promise<{
   items: Array<{
     producto_id: string;
     nombre: string;
@@ -136,24 +136,24 @@ export async function getCart(): Promise<{
   total: number;
   cantidad_productos: number;
 }> {
-  const res = await fetch(`${API_BASE}/carrito`, {
+  const res = await fetch(`${API_BASE}/carrito?sede=${sede}`, {
     method: 'GET',
     headers: authHeaders(),
   });
   return handleResponse(res);
 }
 
-export async function addToCart(producto_id: string, cantidad: number = 1): Promise<{ mensaje: string }> {
+export async function addToCart(producto_id: string, cantidad: number = 1, sede: string): Promise<{ mensaje: string }> {
   const res = await fetch(`${API_BASE}/carrito`, {
     method: 'POST',
     headers: authHeaders(),
-    body: JSON.stringify({ producto_id, cantidad }),
+    body: JSON.stringify({ producto_id, cantidad, sede }),
   });
   return handleResponse(res);
 }
 
-export async function removeFromCart(producto_id: string): Promise<{ mensaje: string }> {
-  const res = await fetch(`${API_BASE}/carrito/${producto_id}`, {
+export async function removeFromCart(producto_id: string, sede: string): Promise<{ mensaje: string }> {
+  const res = await fetch(`${API_BASE}/carrito/${producto_id}?sede=${sede}`, {
     method: 'DELETE',
     headers: authHeaders(),
   });
@@ -161,9 +161,10 @@ export async function removeFromCart(producto_id: string): Promise<{ mensaje: st
 }
 
 // ============ ORDERS ============
-export async function createWebOrder(data?: {
+export async function createWebOrder(data: {
   direccion_entrega?: string;
   departamento_entrega?: string;
+  sede: string;
 }): Promise<{
   pedido_id: string;
   total: number;
@@ -174,7 +175,7 @@ export async function createWebOrder(data?: {
   const res = await fetch(`${API_BASE}/pedidos/web`, {
     method: 'POST',
     headers: authHeaders(),
-    body: JSON.stringify(data || {}),
+    body: JSON.stringify(data),
   });
   return handleResponse(res);
 }

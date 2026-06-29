@@ -15,7 +15,7 @@ export function Checkout() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, sede } = useAuth();
   const { items, total, fetchCart, clearLocalCart } = useCart();
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export function Checkout() {
     setError("");
     setLoading(true);
     try {
-      const payload: any = {};
+      const payload: any = { sede };
       if (direccionEntrega.trim()) payload.direccion_entrega = direccionEntrega;
       if (departamentoEntrega.trim()) payload.departamento_entrega = departamentoEntrega;
       

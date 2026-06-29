@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { Users, FileText, Plus, Image as ImageIcon, Save, UserPlus, LogOut } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { addMenuItem, seedUser } from "../../services/api";
 
 export function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<"menu" | "personal">("menu");
-  const { role, logout } = useAuth();
+  const { role, logout, email } = useAuth();
   const navigate = useNavigate();
 
   // Menu form state
@@ -21,7 +21,7 @@ export function AdminDashboard() {
   // Personnel form state
   const [personalEmail, setPersonalEmail] = useState("");
   const [personalPassword, setPersonalPassword] = useState("");
-  const [personalRol, setPersonalRol] = useState<"empleado" | "admin">("empleado");
+  const personalRol = "empleado" as const;
   const [personalLoading, setPersonalLoading] = useState(false);
 
   // Check role
@@ -130,7 +130,7 @@ export function AdminDashboard() {
             onClick={() => setActiveTab("personal")}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${activeTab === "personal" ? "bg-primary text-white" : "text-foreground/70 hover:bg-black/5"}`}
           >
-            <Users size={20} /> Creación de Personal
+            <Users size={20} /> Crear cuenta empleado
           </button>
         </nav>
 
@@ -146,9 +146,12 @@ export function AdminDashboard() {
         {/* Header */}
         <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6 shrink-0">
           <h1 className="font-display text-xl font-bold">
-            {activeTab === "menu" ? "Gestión de Menú" : "Creación de Personal"}
+            {activeTab === "menu" ? "Gestión de Menú" : "Crear cuenta empleado"}
           </h1>
           <div className="flex items-center gap-4">
+            <div className="bg-primary/10 text-primary px-3 py-1 rounded-full font-bold text-sm border border-primary/20">
+              SEDE: {email ? email.split('@')[0].split('.').slice(1).join(' ').replace('_', ' ').toUpperCase() || 'N/A' : 'N/A'}
+            </div>
             <div className="w-10 h-10 bg-primary/10 text-primary rounded-full flex items-center justify-center font-bold">
               AD
             </div>
@@ -251,9 +254,9 @@ export function AdminDashboard() {
               <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
                 <div className="p-6 border-b border-border bg-black/5">
                   <h2 className="font-display text-lg font-bold flex items-center gap-2">
-                    <UserPlus className="text-primary" /> Crear Cuenta Interna
+                    <UserPlus className="text-primary" /> Crear Cuenta Empleado
                   </h2>
-                  <p className="text-sm text-foreground/60 mt-1">Genera accesos para empleados de cocina o nuevos administradores.</p>
+                  <p className="text-sm text-foreground/60 mt-1">Genera accesos para empleados de cocina de tu sede.</p>
                 </div>
                 
                 <form className="p-6 sm:p-8 space-y-6" onSubmit={(e) => { e.preventDefault(); handlePersonalSubmit(); }}>
@@ -283,39 +286,7 @@ export function AdminDashboard() {
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-foreground/80">Rol del Usuario</label>
-                    <div className="grid grid-cols-2 gap-4">
-                      <label className={`border rounded-xl p-4 cursor-pointer hover:border-primary/50 transition-colors flex items-center gap-3 bg-input-background ${personalRol === 'empleado' ? 'border-primary' : 'border-border'}`}>
-                        <input 
-                          type="radio" 
-                          name="rol" 
-                          value="empleado" 
-                          checked={personalRol === 'empleado'}
-                          onChange={() => setPersonalRol('empleado')}
-                          className="text-primary w-4 h-4" 
-                        />
-                        <div>
-                          <p className="font-bold text-sm">Empleado</p>
-                          <p className="text-xs text-foreground/60">Acceso a pantalla de cocina KDS</p>
-                        </div>
-                      </label>
-                      <label className={`border rounded-xl p-4 cursor-pointer hover:border-primary/50 transition-colors flex items-center gap-3 bg-input-background ${personalRol === 'admin' ? 'border-primary' : 'border-border'}`}>
-                        <input 
-                          type="radio" 
-                          name="rol" 
-                          value="admin" 
-                          checked={personalRol === 'admin'}
-                          onChange={() => setPersonalRol('admin')}
-                          className="text-primary w-4 h-4" 
-                        />
-                        <div>
-                          <p className="font-bold text-sm">Admin</p>
-                          <p className="text-xs text-foreground/60">Control total del sistema</p>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
+
 
                   <div className="pt-4 border-t border-border flex justify-end">
                     <button 
@@ -323,7 +294,7 @@ export function AdminDashboard() {
                       disabled={personalLoading}
                       className="bg-primary hover:bg-primary/90 text-white font-display font-bold py-3 px-8 rounded-xl shadow-lg shadow-primary/20 transition-all flex items-center gap-2 disabled:opacity-50"
                     >
-                      <UserPlus size={20} /> {personalLoading ? 'Creando...' : 'Crear Usuario Interno'}
+                      <UserPlus size={20} /> {personalLoading ? 'Creando...' : 'Crear Cuenta Empleado'}
                     </button>
                   </div>
                 </form>

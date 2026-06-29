@@ -6,15 +6,21 @@ import { useCart } from "../../context/CartContext";
 
 export function ClientLayout() {
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [showSedePopup, setShowSedePopup] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { isGuest, isAuthenticated } = useAuth();
+  const { isGuest, isAuthenticated, sede, updateSede } = useAuth();
   const { items, total, itemCount, fetchCart, removeItem } = useCart();
 
   // Fetch cart on mount and when auth changes
   useEffect(() => {
     if (isAuthenticated) {
       fetchCart();
+      const hasSeen = sessionStorage.getItem('hasSeenSedePopup');
+      if (!hasSeen) {
+        setShowSedePopup(true);
+        sessionStorage.setItem('hasSeenSedePopup', 'true');
+      }
     }
   }, [isAuthenticated, fetchCart]);
 
@@ -79,6 +85,19 @@ export function ClientLayout() {
                 placeholder="Buscar en el menú..."
                 className="bg-transparent border-none outline-none px-2 w-full text-sm placeholder:text-current placeholder:opacity-60"
               />
+            </div>
+            
+            <div className="flex items-center gap-2 bg-white/10 rounded-full px-3 py-1.5 border border-white/20">
+              <MapPin size={16} className="text-white" />
+              <select 
+                value={sede} 
+                onChange={(e) => updateSede(e.target.value)}
+                className="bg-transparent border-none outline-none text-white cursor-pointer text-sm font-bold appearance-none"
+              >
+                <option value="barranco" className="text-black">Barranco</option>
+                <option value="miraflores" className="text-black">Miraflores</option>
+                <option value="san_isidro" className="text-black">San Isidro</option>
+              </select>
             </div>
           </div>
 
@@ -188,6 +207,44 @@ export function ClientLayout() {
           </button>
         </div>
       </div>
+
+      {/* Sede Popup Modal */}
+      {showSedePopup && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-card w-full max-w-sm rounded-[12px] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="bg-primary p-6 text-white text-center">
+              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MapPin size={32} className="text-white" />
+              </div>
+              <h2 className="font-display text-2xl font-bold">¡Bienvenido!</h2>
+            </div>
+            
+            <div className="p-6 sm:p-8 space-y-6 text-center">
+              <p className="text-foreground/80 font-medium">
+                Estás pidiendo en la sede: <span className="font-bold text-primary uppercase">{sede.replace('_', ' ')}</span>
+              </p>
+
+              <div className="flex flex-col gap-3 pt-2">
+                <button 
+                  onClick={() => setShowSedePopup(false)}
+                  className="w-full bg-primary hover:bg-primary/90 text-white font-display font-bold py-3 rounded-[12px] shadow-lg shadow-primary/20 transition-all text-lg hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  OK, Continuar
+                </button>
+                <button 
+                  onClick={() => {
+                    setShowSedePopup(false);
+                    navigate("/client");
+                  }}
+                  className="w-full py-3 rounded-[12px] font-bold text-foreground/60 hover:bg-black/5 transition-colors border-2 border-border"
+                >
+                  Cambiar de sede
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

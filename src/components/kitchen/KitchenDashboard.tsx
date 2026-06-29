@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from "react";
-import { Check, Clock, ChevronRight, LayoutGrid, List } from "lucide-react";
-import { Link, useNavigate } from "react-router";
+import { useState, useEffect } from "react";
+import { Check, LayoutGrid, List } from "lucide-react";
+import { useNavigate } from "react-router";
 import { useAuth } from "../../context/AuthContext";
 import { getWorkQueue, completeStep } from "../../services/api";
 
@@ -23,7 +23,7 @@ export function KitchenDashboard() {
   const [orders, setOrders] = useState<QueueOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [completing, setCompleting] = useState<string | null>(null);
-  const { role, logout } = useAuth();
+  const { role, logout, email } = useAuth();
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -111,6 +111,9 @@ export function KitchenDashboard() {
         </div>
         
         <div className="flex items-center gap-4">
+          <div className="bg-[#008537]/20 text-[#008537] px-3 py-1 rounded-full font-bold text-sm border border-[#008537]/30">
+            SEDE: {email ? email.split('@')[0].split('.').slice(1).join(' ').replace('_', ' ').toUpperCase() || 'N/A' : 'N/A'}
+          </div>
           <div className="flex bg-black/30 rounded-lg p-1 border border-white/10">
             <button 
               onClick={() => setViewMode("grid")}

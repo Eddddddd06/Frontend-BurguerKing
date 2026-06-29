@@ -28,13 +28,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [total, setTotal] = useState(0);
   const [itemCount, setItemCount] = useState(0);
   const [loading, setLoading] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, sede } = useAuth();
 
   const fetchCart = useCallback(async () => {
     if (!isAuthenticated) return;
     setLoading(true);
     try {
-      const data = await getCart();
+      const data = await getCart(sede);
       setItems(data.items || []);
       setTotal(data.total || 0);
       setItemCount(data.cantidad_productos || 0);
@@ -43,12 +43,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, sede]);
 
   const addItem = useCallback(async (producto_id: string, cantidad: number = 1) => {
     setLoading(true);
     try {
-      await apiAddToCart(producto_id, cantidad);
+      await apiAddToCart(producto_id, cantidad, sede);
       await fetchCart();
     } catch (err) {
       console.error('Error adding to cart:', err);
@@ -56,12 +56,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, [fetchCart]);
+  }, [fetchCart, sede]);
 
   const removeItem = useCallback(async (producto_id: string) => {
     setLoading(true);
     try {
-      await apiRemoveFromCart(producto_id);
+      await apiRemoveFromCart(producto_id, sede);
       await fetchCart();
     } catch (err) {
       console.error('Error removing from cart:', err);
@@ -69,7 +69,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, [fetchCart]);
+  }, [fetchCart, sede]);
 
   const clearLocalCart = useCallback(() => {
     setItems([]);

@@ -20,14 +20,15 @@ export function Home() {
   const [emblaRef] = useEmblaCarousel({ loop: true });
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const { isGuest, isAuthenticated } = useAuth();
+  const { isGuest, isAuthenticated, sede } = useAuth();
   const { addItem } = useCart();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMenu = async () => {
+      setLoading(true);
       try {
-        const data = await getMenu();
+        const data = await getMenu(sede);
         setMenuItems(data.menu || []);
       } catch (err) {
         console.error('Error fetching menu:', err);
@@ -36,7 +37,7 @@ export function Home() {
       }
     };
     fetchMenu();
-  }, []);
+  }, [sede]);
 
   const promos = menuItems.filter(item => item.tipo === 'promo');
   const carta = menuItems.filter(item => item.tipo === 'carta');

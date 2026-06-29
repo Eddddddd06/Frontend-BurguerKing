@@ -22,7 +22,7 @@ export function LoginRegister() {
     setLoading(true);
     try {
       const data = await loginUser(email, password);
-      login(data.token, data.rol);
+      login(data.token, data.rol, email);
 
       // Redirect based on role from backend
       if (data.rol === "admin") {
@@ -47,7 +47,7 @@ export function LoginRegister() {
       await registerUser({ nombre, email, password, direccion, departamento });
       // After successful registration, auto-login
       const data = await loginUser(email, password);
-      login(data.token, data.rol);
+      login(data.token, data.rol, email);
       navigate("/client");
     } catch (err: any) {
       setError(err.message || "Error al registrarse");
