@@ -74,7 +74,7 @@ export function LoginRegister() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
-      <img src="/Logo/Logo_Burguer.png" alt="Burger King Logo" className="mx-auto mb-8 h-20 w-auto object-contain" />
+      <img src="/Logo/Logo_Letrasrojas.png" alt="Burger King Logo" className="mx-auto mb-8 h-20 w-auto object-contain" />
       
       <div className="bg-card rounded-[12px] shadow-sm border border-border w-full max-w-md overflow-hidden">
         

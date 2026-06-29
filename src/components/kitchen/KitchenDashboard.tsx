@@ -108,7 +108,7 @@ export function KitchenDashboard() {
       <header className="flex justify-between items-center mb-8 bg-[#2A2A2A] p-4 rounded-xl border border-white/10">
         <div>
           <h1 className="font-display text-2xl font-bold flex items-center gap-3">
-            <img src="/Logo/Logo_Burguer.png" alt="Burger King Logo" className="h-8 w-auto object-contain" />
+            <img src="/Logo/LogoLetrasblancas.png" alt="Burger King Logo" className="h-8 w-auto object-contain" />
             Pantalla de Cocina / KDS
           </h1>
           <p className="text-white/60 text-sm mt-1">Órdenes activas en cola: {orders.length}</p>
