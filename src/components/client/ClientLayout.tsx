@@ -79,9 +79,9 @@ export function ClientLayout() {
         <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
             <div className="flex items-center gap-4 flex-1">
             <Link to="/client" className="flex items-center gap-2">
-              <img src="/Logo/LogoLetrasblancas.png" alt="Burger King Logo" className="h-10 w-auto object-contain" />
+              <img src="/Logo/LogoLetrasblancas.png" alt="Burger Kong Logo" className="h-10 w-auto object-contain" />
               <span className="hidden sm:inline font-display text-2xl font-bold tracking-tighter whitespace-nowrap">
-                BURGER KING
+                BURGER KONG
               </span>
             </Link>
 
@@ -91,10 +91,12 @@ export function ClientLayout() {
             <div className="relative" ref={sedeRef}>
               <button 
                 onClick={() => setIsSedeOpen(!isSedeOpen)}
-                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 rounded-full px-4 py-2 border border-white/20 transition-colors cursor-pointer text-white text-sm font-bold"
+                className="flex items-center justify-between gap-2 min-w-[160px] bg-white/10 hover:bg-white/20 rounded-full px-4 py-2 border border-white/20 transition-colors cursor-pointer text-white text-sm font-bold"
               >
-                <MapPin size={16} className="text-white" />
-                <span className="capitalize">{sede.replace('_', ' ')}</span>
+                <div className="flex items-center gap-2">
+                  <MapPin size={16} className="text-white" />
+                  <span className="capitalize">{sede.replace('_', ' ')}</span>
+                </div>
                 <ChevronDown size={16} className={`transition-transform ${isSedeOpen ? 'rotate-180' : ''}`} />
               </button>
 
@@ -141,17 +143,7 @@ export function ClientLayout() {
         </div>
       </header>
 
-      {/* SubMenu */}
-      <div className="bg-[#EBE0D6] border-b border-border/50">
-        <div className="container mx-auto px-4 h-14 flex items-center justify-center overflow-x-auto">
-          <Link 
-            to="/client" 
-            className="font-display font-bold bg-primary text-white px-6 py-2 rounded-full text-sm hover:bg-primary/90 transition-all shadow-md flex items-center gap-2 whitespace-nowrap"
-          >
-            🍔 MENÚ PRINCIPAL
-          </Link>
-        </div>
-      </div>
+      {/* Header/NavBar ends above */}
 
       {/* Main Content */}
       <main className="flex-1 w-full">
