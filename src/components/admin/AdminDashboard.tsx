@@ -84,18 +84,21 @@ export function AdminDashboard() {
   };
 
   const handlePersonalSubmit = async () => {
-    if (!personalUsername.trim() || !personalPassword.trim()) {
+    const cleanUsername = personalUsername.trim();
+    const cleanPassword = personalPassword.trim();
+
+    if (!cleanUsername || !cleanPassword) {
       alert("Completa el nombre de usuario y contraseña.");
       return;
     }
 
-    const generatedEmail = `${personalUsername.toLowerCase()}.${adminSede}@burgerking.com`;
+    const generatedEmail = `${cleanUsername.toLowerCase()}.${adminSede}@burgerking.com`;
 
     setPersonalLoading(true);
     try {
       const result = await seedUser({
         email: generatedEmail,
-        password: personalPassword,
+        password: cleanPassword,
         rol: personalRol,
         sede: adminSede
       });

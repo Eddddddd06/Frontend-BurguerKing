@@ -21,8 +21,10 @@ export function LoginRegister() {
     setError("");
     setLoading(true);
     try {
-      const data = await loginUser(email, password);
-      login(data.token, data.rol, email);
+      const cleanEmail = email.toLowerCase().trim();
+      const cleanPassword = password.trim();
+      const data = await loginUser(cleanEmail, cleanPassword);
+      login(data.token, data.rol, cleanEmail);
 
       // Redirect based on role from backend
       if (data.rol === "admin") {
@@ -44,10 +46,12 @@ export function LoginRegister() {
     setError("");
     setLoading(true);
     try {
-      await registerUser({ nombre, email, password, direccion, departamento });
+      const cleanEmail = email.toLowerCase().trim();
+      const cleanPassword = password.trim();
+      await registerUser({ nombre, email: cleanEmail, password: cleanPassword, direccion, departamento });
       // After successful registration, auto-login
-      const data = await loginUser(email, password);
-      login(data.token, data.rol, email);
+      const data = await loginUser(cleanEmail, cleanPassword);
+      login(data.token, data.rol, cleanEmail);
       navigate("/client");
     } catch (err: any) {
       setError(err.message || "Error al registrarse");
