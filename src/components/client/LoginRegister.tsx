@@ -21,7 +21,14 @@ export function LoginRegister() {
     setError("");
     setLoading(true);
     try {
-      const cleanEmail = email.toLowerCase().trim();
+      let cleanEmail = email.trim();
+      
+      // Solo forzar minúsculas si detectamos que es un correo de empleado 
+      // (termina en @burgerking.com y no empieza con admin.)
+      if (cleanEmail.toLowerCase().endsWith("@burgerking.com") && !cleanEmail.toLowerCase().startsWith("admin.")) {
+        cleanEmail = cleanEmail.toLowerCase();
+      }
+
       const cleanPassword = password.trim();
       const data = await loginUser(cleanEmail, cleanPassword);
       login(data.token, data.rol, cleanEmail);
@@ -46,7 +53,7 @@ export function LoginRegister() {
     setError("");
     setLoading(true);
     try {
-      const cleanEmail = email.toLowerCase().trim();
+      const cleanEmail = email.trim();
       const cleanPassword = password.trim();
       await registerUser({ nombre, email: cleanEmail, password: cleanPassword, direccion, departamento });
       // After successful registration, auto-login
