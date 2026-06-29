@@ -6,7 +6,6 @@ import { useCart } from "../../context/CartContext";
 
 export function ClientLayout() {
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [showSedePopup, setShowSedePopup] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { isGuest, isAuthenticated, sede, updateSede } = useAuth();
@@ -16,11 +15,6 @@ export function ClientLayout() {
   useEffect(() => {
     if (isAuthenticated) {
       fetchCart();
-      const hasSeen = sessionStorage.getItem('hasSeenSedePopup');
-      if (!hasSeen) {
-        setShowSedePopup(true);
-        sessionStorage.setItem('hasSeenSedePopup', 'true');
-      }
     }
   }, [isAuthenticated, fetchCart]);
 
@@ -208,43 +202,6 @@ export function ClientLayout() {
         </div>
       </div>
 
-      {/* Sede Popup Modal */}
-      {showSedePopup && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-card w-full max-w-sm rounded-[12px] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="bg-primary p-6 text-white text-center">
-              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <MapPin size={32} className="text-white" />
-              </div>
-              <h2 className="font-display text-2xl font-bold">¡Bienvenido!</h2>
-            </div>
-            
-            <div className="p-6 sm:p-8 space-y-6 text-center">
-              <p className="text-foreground/80 font-medium">
-                Estás pidiendo en la sede: <span className="font-bold text-primary uppercase">{sede.replace('_', ' ')}</span>
-              </p>
-
-              <div className="flex flex-col gap-3 pt-2">
-                <button 
-                  onClick={() => setShowSedePopup(false)}
-                  className="w-full bg-primary hover:bg-primary/90 text-white font-display font-bold py-3 rounded-[12px] shadow-lg shadow-primary/20 transition-all text-lg hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  OK, Continuar
-                </button>
-                <button 
-                  onClick={() => {
-                    setShowSedePopup(false);
-                    navigate("/client");
-                  }}
-                  className="w-full py-3 rounded-[12px] font-bold text-foreground/60 hover:bg-black/5 transition-colors border-2 border-border"
-                >
-                  Cambiar de sede
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

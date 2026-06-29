@@ -53,7 +53,7 @@ export function Checkout() {
     }
     setLoading(true);
     try {
-      await payOrder(pedidoId, numeroTarjeta.replace(/\s/g, ''));
+      await payOrder(pedidoId, numeroTarjeta.replace(/\s/g, ''), sede);
       clearLocalCart();
       setIsPaymentModalOpen(false);
       alert('¡Pago procesado exitosamente! Tu pedido ha sido enviado a cocina. 🔥');

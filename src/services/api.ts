@@ -180,14 +180,14 @@ export async function createWebOrder(data: {
   return handleResponse(res);
 }
 
-export async function payOrder(pedido_id: string, numero_tarjeta: string): Promise<{
+export async function payOrder(pedido_id: string, numero_tarjeta: string, sede: string): Promise<{
   mensaje: string;
   estado_actual: string;
 }> {
   const res = await fetch(`${API_BASE}/pedidos/${pedido_id}/pagar`, {
     method: 'POST',
     headers: authHeaders(),
-    body: JSON.stringify({ numero_tarjeta }),
+    body: JSON.stringify({ numero_tarjeta, sede }),
   });
   return handleResponse(res);
 }
